@@ -1,0 +1,201 @@
+version: '3.8'
+
+services:
+  # PostgreSQL数据库
+  postgres:
+    image: postgres:15-alpine
+    container_name: photo_platform_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: photo_platform
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infrastructure/database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    networks:
+      - photo_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis缓存
+  redis:
+    image: redis:7-alpine
+    container_name: photo_platform_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - photo_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # RabbitMQ消息队列
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: photo_platform_rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USERNAME:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
+    ports:
+      - "5672:5672"    # AMQP协议端口
+      - "15672:15672"  # 管理界面端口
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - photo_network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # MinIO对象存储 (开发环境使用)
+  minio:
+    image: minio/minio:latest
+    container_name: photo_platform_minio
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    ports:
+      - "9000:9000"   # API端口
+      - "9001:9001"   # 控制台端口
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    networks:
+      - photo_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # API服务 (NestJS)
+  api:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/Dockerfile.api
+    container_name: photo_platform_api
+    environment:
+      NODE_ENV: development
+      PORT: 8000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_DATABASE: photo_platform
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      JWT_SECRET: ${JWT_SECRET:-development-secret-key}
+      AWS_S3_ENDPOINT: http://minio:9000
+      AWS_S3_ACCESS_KEY_ID: ${MINIO_ROOT_USER:-minioadmin}
+      AWS_S3_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin}
+      AWS_S3_BUCKET: photo-platform
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./services/api/src:/app/src
+      - ./services/api/package.json:/app/package.json
+      - ./uploads:/app/uploads
+    networks:
+      - photo_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    command: npm run start:dev
+
+  # AI服务 (FastAPI)
+  ai:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/Dockerfile.ai
+    container_name: photo_platform_ai
+    environment:
+      PYTHONUNBUFFERED: 1
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      MODEL_PATH: /app/models
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./services/ai/src:/app/src
+      - ./services/ai/models:/app/models
+      - ./services/ai/requirements.txt:/app/requirements.txt
+    networks:
+      - photo_network
+    depends_on:
+      - redis
+      - rabbitmq
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8001 --reload
+
+  # Web前端 (Next.js)
+  web:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/Dockerfile.web
+    container_name: photo_platform_web
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_URL: http://api:8000/api/v1
+      NEXT_PUBLIC_MAP_KEY: ${AMAP_KEY}
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./apps/web/src:/app/src
+      - ./apps/web/public:/app/public
+      - ./apps/web/package.json:/app/package.json
+      - ./apps/web/next.config.js:/app/next.config.js
+    networks:
+      - photo_network
+    depends_on:
+      - api
+    command: npm run dev
+
+  # Nginx反向代理
+  nginx:
+    image: nginx:alpine
+    container_name: photo_platform_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infrastructure/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./infrastructure/nginx/ssl:/etc/nginx/ssl
+    networks:
+      - photo_network
+    depends_on:
+      - api
+      - web
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+  minio_data:
+    driver: local
+
+networks:
+  photo_network:
+    driver: bridge
