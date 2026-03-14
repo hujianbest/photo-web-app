@@ -6,6 +6,12 @@ import { AppController } from './app.controller';
 import { UsersModule } from './modules/users/users.module';
 import { UploadModule } from './modules/upload/upload.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { WorksModule } from './modules/works/works.module';
+import { SpotsModule } from './modules/spots/spots.module';
+import { BookingsModule } from './modules/bookings/bookings.module';
+import { OrdersModule } from './modules/orders/orders.module';
+import { ArticlesModule } from './modules/articles/articles.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -34,6 +40,12 @@ import { AuthModule } from './modules/auth/auth.module';
     UsersModule,
     UploadModule,
     AuthModule,
+    WorksModule,
+    SpotsModule,
+    BookingsModule,
+    OrdersModule,
+    ArticlesModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [],
