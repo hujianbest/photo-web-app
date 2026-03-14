@@ -53,6 +53,18 @@ export class UsersService {
     });
   }
 
+  async findByPhone(phone: string): Promise<User | null> {
+    return this.userRepository.findOne({
+      where: { phone },
+    });
+  }
+
+  async updateLastLogin(userId: number): Promise<void> {
+    await this.userRepository.update(userId, {
+      last_login_at: new Date(),
+    });
+  }
+
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     await this.userRepository.update(id, updateUserDto);
     return this.findOne(id);

@@ -1,10 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   // 启用CORS
   app.enableCors({
@@ -20,6 +21,12 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+
+  // 静态文件服务
+  const uploadPath = process.env.UPLOAD_PATH || './uploads';
+  app.useStaticAssets(uploadPath, {
+    prefix: '/uploads/',
+  });
 
   // API前缀
   app.setGlobalPrefix('api/v1');
@@ -38,6 +45,7 @@ async function bootstrap() {
     .addTag('articles', '文章管理')
     .addTag('notifications', '通知管理')
     .addTag('upload', '文件上传')
+    .addTag('auth', '认证授权')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
@@ -48,6 +56,7 @@ async function bootstrap() {
 
   console.log(`🚀 应用正在运行: http://localhost:${port}`);
   console.log(`📚 API文档: http://localhost:${port}/api/docs`);
+  console.log(`📁 静态文件服务: http://localhost:${port}/uploads/`);
 }
 
 bootstrap();

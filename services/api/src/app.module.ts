@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BullModule } from '@nestjs/bull';
 import { AppController } from './app.controller';
 import { UsersModule } from './modules/users/users.module';
+import { UploadModule } from './modules/upload/upload.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -30,6 +32,8 @@ import { UsersModule } from './modules/users/users.module';
       },
     }),
     UsersModule,
+    UploadModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [],
