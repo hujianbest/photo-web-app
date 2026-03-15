@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { SafeImage } from '@/components/SafeImage';
 
 export function Header() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<any>(null);
 
+  // 登录态由 Header 从 localStorage 恢复（access_token、user_data），避免刷新后闪退为未登录
   useEffect(() => {
     // 检查登录状态
     const token = localStorage.getItem('access_token');
@@ -62,6 +64,12 @@ export function Header() {
               约拍
             </Link>
             <Link
+              href="/orders"
+              className="text-gray-700 hover:text-indigo-600 transition"
+            >
+              订单
+            </Link>
+            <Link
               href="/articles"
               className="text-gray-700 hover:text-indigo-600 transition"
             >
@@ -83,7 +91,7 @@ export function Header() {
                   className="flex items-center space-x-2"
                 >
                   {user?.avatar_url ? (
-                    <img
+                    <SafeImage
                       src={user.avatar_url}
                       alt="avatar"
                       className="w-8 h-8 rounded-full object-cover"
