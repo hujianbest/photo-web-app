@@ -56,6 +56,7 @@ npm run start
 ```
 
 - `NEXT_PUBLIC_API_URL` 指向生产 API 地址（如 `https://api.your-domain.com`）。
+- 可选：`NEXT_PUBLIC_MAP_KEY` 用于打卡点地图（高德/腾讯），不配置时显示占位与 OpenStreetMap 链接。
 
 ### 基础设施
 

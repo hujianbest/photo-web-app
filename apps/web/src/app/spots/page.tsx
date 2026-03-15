@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { SafeImage } from '@/components/SafeImage';
+import { SpotMap } from '@/components/SpotMap';
 import { apiFetch } from '@/lib/api';
 
 interface Spot {
@@ -11,6 +12,7 @@ interface Spot {
   name: string;
   description: string;
   location: string;
+  coordinates?: { lat: number; lng: number } | null;
   images: string[];
   checkins: number;
   views: number;
@@ -54,6 +56,12 @@ export default function SpotsPage() {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">打卡点</h1>
           <p className="text-gray-600">发现最佳拍摄地点，分享你的打卡记录</p>
         </div>
+
+        {!loading && spots.length > 0 && (
+          <div className="mb-8">
+            <SpotMap spots={spots} height="280px" />
+          </div>
+        )}
 
         {loading ? (
           <div className="text-center py-12">
