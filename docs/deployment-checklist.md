@@ -62,6 +62,7 @@ npm run start
 
 - PostgreSQL、Redis（及可选 RabbitMQ）按 `docker-compose` 或运维方案提前就绪。
 - 健康检查：可请求 `GET /api/v1/health` 验证 API 存活。
+- **WebSocket 实时通知**：与 API 同端口，路径 `/ws`，命名空间 `/notifications`；前端通过 `NEXT_PUBLIC_API_URL` 同源连接，反向代理需支持 WebSocket 升级。
 
 ## 5. 上线后验证
 

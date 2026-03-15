@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Notification } from './entities/notification.entity';
 import { User } from '../users/entities/user.entity';
+import { NotificationsGateway } from './notifications.gateway';
 
 @Injectable()
 export class NotificationsService {
@@ -11,6 +12,7 @@ export class NotificationsService {
     private notificationsRepository: Repository<Notification>,
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    private notificationsGateway: NotificationsGateway,
   ) {}
 
   async findAll(userId: number, params: {
@@ -147,7 +149,12 @@ export class NotificationsService {
       ...notificationData,
     });
 
-    return await this.notificationsRepository.save(notification);
+    const saved = await this.notificationsRepository.save(notification);
+    const formatted = this.formatNotification(saved);
+    if (this.notificationsGateway.server) {
+      this.notificationsGateway.pushToUser(userId, formatted);
+    }
+    return saved;
   }
 
   private formatNotification(notification: Notification) {

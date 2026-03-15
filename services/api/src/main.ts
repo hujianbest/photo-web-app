@@ -2,12 +2,16 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { IoAdapter } from '@nestjs/platform-socket.io';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 import * as express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  // WebSocket 实时通知（Socket.io）
+  app.useWebSocketAdapter(new IoAdapter(app));
 
   // 全局异常过滤：数据库/连接错误返回 503 友好提示
   app.useGlobalFilters(new GlobalExceptionFilter());

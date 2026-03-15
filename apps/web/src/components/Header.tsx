@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { SafeImage } from '@/components/SafeImage';
+import { useNotifications } from '@/context/NotificationsContext';
 
 const NAV_LINKS = [
   { href: '/', label: '首页' },
@@ -17,6 +18,8 @@ export function Header() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const notifications = useNotifications();
+  const unreadCount = notifications?.unreadCount ?? 0;
 
   // 登录态由 Header 从 localStorage 恢复（access_token、user_data），避免刷新后闪退为未登录
   useEffect(() => {
@@ -64,9 +67,15 @@ export function Header() {
               <>
                 <Link
                   href="/notifications"
-                  className="text-gray-700 hover:text-indigo-600 transition"
+                  className="relative text-gray-700 hover:text-indigo-600 transition inline-flex items-center min-h-[44px]"
+                  aria-label={unreadCount > 0 ? `通知，${unreadCount} 条未读` : '通知'}
                 >
                   🔔
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-0.5 -right-1 min-w-[18px] h-[18px] rounded-full bg-red-500 text-white text-xs flex items-center justify-center px-1">
+                      {unreadCount > 99 ? '99+' : unreadCount}
+                    </span>
+                  )}
                 </Link>
                 <Link
                   href="/profile"
