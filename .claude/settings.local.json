@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(chmod +x scripts/setup.sh scripts/build.sh scripts/deploy.sh)",
+      "Bash(cd apps/web && npm init -y)",
+      "Bash(cd apps/web && npm install next@latest react@latest react-dom@latest typescript @types/node @types/react @types/react-dom --save)",
+      "Bash(npm install *)",
+      "Bash(npx *)",
+      "Bash(cd *)",
+      "Bash(docker --version && docker-compose --version)",
+      "Bash(*)"
+    ]
+  }
+}

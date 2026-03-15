@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { WorkCard } from '@/components/WorkCard';
+import { apiFetch } from '@/lib/api';
 
 interface Work {
   id: number;
@@ -40,12 +41,12 @@ export default function WorksPage() {
         ...(category && { category }),
       });
 
-      const response = await fetch(`http://localhost:8000/api/v1/works?${params}`);
+      const response = await apiFetch(`/works?${params}`);
       const data = await response.json();
 
       if (data.success) {
-        setWorks(data.data.items);
-        setTotalPages(data.data.pagination.total_pages);
+        setWorks(data.data?.items ?? []);
+        setTotalPages(data.data?.pagination?.total_pages ?? 1);
       }
     } catch (error) {
       console.error('获取作品列表失败:', error);

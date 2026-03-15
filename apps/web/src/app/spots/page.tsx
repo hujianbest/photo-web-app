@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import { SafeImage } from '@/components/SafeImage';
+import { apiFetch } from '@/lib/api';
 
 interface Spot {
   id: number;
@@ -28,13 +30,13 @@ export default function SpotsPage() {
   const fetchSpots = async () => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `http://localhost:8000/api/v1/spots?page=${page}&limit=12&sort=popular`
+      const response = await apiFetch(
+        `/spots?page=${page}&limit=12&sort=popular`
       );
       const data = await response.json();
 
       if (data.success) {
-        setSpots(data.data.items);
+        setSpots(data.data?.items ?? []);
       }
     } catch (error) {
       console.error('获取打卡点列表失败:', error);
@@ -70,15 +72,21 @@ export default function SpotsPage() {
                 className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition"
               >
                 <div className="relative h-48 bg-gradient-to-br from-blue-400 to-purple-500">
-                  {spot.images?.[0] && (
-                    <img
+                  {spot.images?.[0] ? (
+                    <SafeImage
                       src={spot.images[0]}
+                      alt={spot.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <SafeImage
+                      src=""
                       alt={spot.name}
                       className="w-full h-full object-cover"
                     />
                   )}
                   <div className="absolute top-2 right-2 bg-white px-2 py-1 rounded text-sm font-semibold">
-                    ⭐ {spot.rating.toFixed(1)}
+                    ⭐ {(spot.rating ?? 0).toFixed(1)}
                   </div>
                 </div>
 
@@ -90,8 +98,8 @@ export default function SpotsPage() {
                   </p>
 
                   <div className="flex items-center justify-between text-sm text-gray-500">
-                    <span>📍 {spot.checkins} 次打卡</span>
-                    <span>👁️ {spot.views} 次浏览</span>
+                    <span>📍 {spot.checkins ?? 0} 次打卡</span>
+                    <span>👁️ {spot.views ?? 0} 次浏览</span>
                   </div>
                 </div>
               </div>
