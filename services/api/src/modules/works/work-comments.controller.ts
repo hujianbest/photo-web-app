@@ -33,7 +33,7 @@ export class WorkCommentsController {
     @Body() createCommentDto: CreateCommentDto,
     @Request() req,
   ) {
-    return this.worksService.create(
+    return this.workCommentsService.create(
       +workId,
       createCommentDto,
       req.user.id,
@@ -50,6 +50,6 @@ export class WorkCommentsController {
     @Param('commentId') commentId: string,
     @Request() req,
   ) {
-    return this.worksService.remove(+commentId, req.user.id);
+    return this.workCommentsService.remove(+commentId, req.user.id);
   }
 }

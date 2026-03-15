@@ -249,7 +249,7 @@ export class AuthService {
 
     // 重置密码
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    await this.usersService.update(user.id, { password_hash: hashedPassword });
+    await this.usersService.updatePassword(user.id, hashedPassword);
 
     return {
       success: true,

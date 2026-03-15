@@ -43,7 +43,7 @@ export class UploadController {
       throw new BadRequestException('请选择要上传的文件');
     }
 
-    return this.uploadService.uploadImages(file);
+    return this.uploadService.uploadImages([file]);
   }
 
   @Get('presigned-url')

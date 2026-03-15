@@ -14,7 +14,7 @@ export class WorkLikesController {
   @ApiOperation({ summary: '点赞作品' })
   @ApiResponse({ status: 201, description: '点赞成功' })
   async create(@Param('workId') workId: string, @Request() req) {
-    return this.worksService.likeWork(+workId, req.user.id);
+    return this.workLikesService.likeWork(+workId, req.user.id);
   }
 
   @Delete()
@@ -23,14 +23,14 @@ export class WorkLikesController {
   @ApiOperation({ summary: '取消点赞' })
   @ApiResponse({ status: 200, description: '取消点赞成功' })
   async remove(@Param('workId') workId: string, @Request() req) {
-    return this.worksService.unlikeWork(+workId, req.user.id);
+    return this.workLikesService.unlikeWork(+workId, req.user.id);
   }
 
   @Get()
   @ApiOperation({ summary: '获取作品点赞列表' })
   @ApiResponse({ status: 200, description: '获取成功' })
   async findLikes(@Param('workId') workId: string) {
-    return this.worksService.findWorkLikes(+workId);
+    return this.workLikesService.findWorkLikes(+workId);
   }
 
   @Post('check')
@@ -39,6 +39,6 @@ export class WorkLikesController {
   @ApiOperation({ summary: '检查是否已点赞' })
   @ApiResponse({ status: 200, description: '检查成功' })
   async checkLike(@Param('workId') workId: string, @Request() req) {
-    return this.worksService.checkLike(+workId, req.user.id);
+    return this.workLikesService.checkLike(+workId, req.user.id);
   }
 }

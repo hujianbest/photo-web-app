@@ -3,9 +3,18 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
+import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
+import * as express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  // 全局异常过滤：数据库/连接错误返回 503 友好提示
+  app.useGlobalFilters(new GlobalExceptionFilter());
+
+  // 增大请求体限制，避免大文件上传超时（与 UPLOAD_MAX_SIZE 配合使用）
+  app.use(express.json({ limit: '50mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
   // 启用CORS
   app.enableCors({
@@ -52,7 +61,9 @@ async function bootstrap() {
   SwaggerModule.setup('api/docs', app, document);
 
   const port = process.env.PORT || 8000;
-  await app.listen(port);
+  const server = await app.listen(port);
+  // 大文件上传时延长超时（默认约 2 分钟）
+  server.timeout = 120000;
 
   console.log(`🚀 应用正在运行: http://localhost:${port}`);
   console.log(`📚 API文档: http://localhost:${port}/api/docs`);

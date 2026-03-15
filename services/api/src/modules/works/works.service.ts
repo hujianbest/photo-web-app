@@ -20,19 +20,21 @@ export class WorksService {
       throw new NotFoundException('用户不存在');
     }
 
+    const { coordinates, ...rest } = createWorkDto;
     const work = this.worksRepository.create({
-      ...createWorkDto,
+      ...rest,
       user_id: userId,
       status: 'published',
       published_at: new Date(),
-    });
+      coordinates: coordinates ? JSON.stringify(coordinates) : undefined,
+    } as Partial<Work>);
 
     const savedWork = await this.worksRepository.save(work);
 
     // 给用户添加积分
     await this.usersService.addPoints(userId, 10, '发布作品');
 
-    return this.findOne(savedWork.id, userId);
+    return this.findOne((savedWork as Work).id, userId);
   }
 
   async findAll(params: {
@@ -147,15 +149,15 @@ export class WorksService {
       .orderBy('COUNT(work.id)', 'DESC')
       .getRawMany();
 
-    return {
-      success: true,
-      data: categories.map(item => ({
+    const data = await Promise.all(
+      categories.map(async (item) => ({
         name: item.category,
         count: await this.worksRepository.count({
           where: { category: item.category, status: 'published' },
         }),
       })),
-    };
+    );
+    return { success: true, data };
   }
 
   async findOne(id: number, currentUserId?: number) {
@@ -189,7 +191,12 @@ export class WorksService {
       throw new ForbiddenException('无权修改此作品');
     }
 
-    await this.worksRepository.update(id, updateWorkDto);
+    const { coordinates, ...rest } = updateWorkDto;
+    const updatePayload: Partial<Work> = { ...rest };
+    if (coordinates !== undefined) {
+      updatePayload.coordinates = typeof coordinates === 'string' ? coordinates : JSON.stringify(coordinates);
+    }
+    await this.worksRepository.update(id, updatePayload);
 
     return this.findOne(id, userId);
   }

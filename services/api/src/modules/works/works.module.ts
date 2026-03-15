@@ -5,14 +5,14 @@ import { WorksService } from './works.service';
 import { Work } from './entities/work.entity';
 import { WorkLikesController } from './work-likes.controller';
 import { WorkLikesService } from './work-likes.service';
-import { WorkLikes } from './entities/work-likes.entity';
+import { WorkLike } from './entities/work-likes.entity';
 import { WorkCommentsController } from './work-comments.controller';
 import { WorkCommentsService } from './work-comments.service';
-import { WorkComments } from './entities/work-comments.entity';
+import { WorkComment } from './entities/work-comments.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Work, WorkLikes, WorkComments]),
+    TypeOrmModule.forFeature([Work, WorkLike, WorkComment]),
   ],
   controllers: [
     WorksController,

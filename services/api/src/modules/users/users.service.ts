@@ -66,8 +66,12 @@ export class UsersService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
-    await this.userRepository.update(id, updateUserDto);
+    await this.userRepository.update(id, updateUserDto as Partial<User>);
     return this.findOne(id);
+  }
+
+  async updatePassword(userId: number, hashedPassword: string): Promise<void> {
+    await this.userRepository.update(userId, { password_hash: hashedPassword });
   }
 
   async remove(id: number): Promise<void> {

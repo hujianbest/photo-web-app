@@ -15,17 +15,19 @@ export class SpotsService {
   ) {}
 
   async create(createSpotDto: CreateSpotDto, userId: number) {
+    const { coordinates, ...rest } = createSpotDto;
     const spot = this.spotsRepository.create({
-      ...createSpotDto,
+      ...rest,
       creator_id: userId,
-    });
+      coordinates: coordinates ? JSON.stringify(coordinates) : undefined,
+    } as Partial<CheckinSpot>);
 
     const savedSpot = await this.spotsRepository.save(spot);
 
     // 给用户添加积分
     await this.usersService.addPoints(userId, 5, '创建打卡点');
 
-    return this.findOne(savedSpot.id, userId);
+    return this.findOne((savedSpot as CheckinSpot).id, userId);
   }
 
   async findAll(params: {
@@ -183,15 +185,15 @@ export class SpotsService {
       .orderBy('COUNT(spot.id)', 'DESC')
       .getRawMany();
 
-    return {
-      success: true,
-      data: cities.map(item => ({
+    const data = await Promise.all(
+      cities.map(async (item) => ({
         name: item.city,
         count: await this.spotsRepository.count({
           where: { city: item.city, status: 'active' },
         }),
       })),
-    };
+    );
+    return { success: true, data };
   }
 
   async findOne(id: number, currentUserId?: number) {
@@ -225,7 +227,12 @@ export class SpotsService {
       throw new ForbiddenException('无权修改此打卡点');
     }
 
-    await this.spotsRepository.update(id, updateSpotDto);
+    const { coordinates, ...rest } = updateSpotDto;
+    const updatePayload: Partial<CheckinSpot> = { ...rest };
+    if (coordinates !== undefined) {
+      updatePayload.coordinates = typeof coordinates === 'string' ? coordinates : JSON.stringify(coordinates);
+    }
+    await this.spotsRepository.update(id, updatePayload);
 
     return this.findOne(id, userId);
   }

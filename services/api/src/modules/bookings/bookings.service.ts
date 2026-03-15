@@ -26,15 +26,18 @@ export class BookingsService {
       throw new ForbiddenException('不能约拍自己');
     }
 
+    const { coordinates, ...rest } = createBookingDto;
     const booking = this.bookingsRepository.create({
-      ...createBookingDto,
+      ...rest,
+      date: new Date(createBookingDto.date),
       requester_id: userId,
       response_deadline: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3天后过期
-    });
+      coordinates: coordinates ? JSON.stringify(coordinates) : undefined,
+    } as unknown as Partial<BookingRequest>);
 
     const savedBooking = await this.bookingsRepository.save(booking);
 
-    return this.findOne(savedBooking.id, userId);
+    return this.findOne((savedBooking as BookingRequest).id, userId);
   }
 
   async findAll(params: {

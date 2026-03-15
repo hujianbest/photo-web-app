@@ -22,21 +22,23 @@ export class CheckinsService {
       throw new NotFoundException('打卡点不存在');
     }
 
+    const { coordinates, ...rest } = createCheckinDto;
     const checkin = this.checkinsRepository.create({
-      ...createCheckinDto,
+      ...rest,
       user_id: userId,
       spot_id: spotId,
-    });
+      coordinates: coordinates ? JSON.stringify(coordinates) : undefined,
+    } as Partial<Checkin>);
 
     const savedCheckin = await this.checkinsRepository.save(checkin);
 
     // 增加打卡点打卡数
-    await this.spotsRepository.increment({ id: spotId }, 'checkins',1);
+    await this.spotsRepository.increment({ id: spotId }, 'checkins', 1);
 
     // 给用户添加积分
-    await this.usersService.addPoints(userId,5, '打卡');
+    await this.usersService.addPoints(userId, 5, '打卡');
 
-    return this.findOne(savedCheckin.id);
+    return this.findOne((savedCheckin as Checkin).id);
   }
 
   async findAll(spotId: number, params: { page: number; limit: number }) {
