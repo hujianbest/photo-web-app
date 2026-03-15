@@ -5,6 +5,8 @@ node_modules/
 
 # Testing
 coverage/
+playwright-report/
+test-results/
 *.log
 *.local
 .nyc_output/
@@ -13,6 +15,7 @@ coverage/
 dist/
 build/
 .next/
+*.tsbuildinfo
 out/
 .nuxt/
 .vuepress/dist/
