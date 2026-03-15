@@ -109,6 +109,41 @@ export class OrdersService {
     };
   }
 
+  /** 获取支付参数/链接，供前端跳转支付或调起 SDK */
+  async preparePay(id: number, userId: number) {
+    const order = await this.ordersRepository.findOne({ where: { id } });
+    if (!order) throw new NotFoundException('订单不存在');
+    if (order.client_id !== userId) throw new ForbiddenException('无权操作此订单');
+    if (order.status !== 'pending') throw new ForbiddenException('订单状态不正确');
+
+    const baseUrl = process.env.BASE_URL || process.env.APP_URL || 'http://localhost:3000';
+    const isSandbox = process.env.APP_ENV !== 'production' || process.env.PAYMENT_SANDBOX === 'true';
+
+    if (isSandbox) {
+      return {
+        success: true,
+        data: {
+          pay_url: `${baseUrl}/orders/${id}/pay-sandbox`,
+          order_no: order.order_no,
+          amount: Number(order.amount),
+          sandbox: true,
+          message: '当前为沙箱环境，请在前端完成模拟支付',
+        },
+      };
+    }
+
+    // 生产环境可在此接入支付宝/微信返回的 pay_url 或 payment_params
+    return {
+      success: true,
+      data: {
+        pay_url: `${baseUrl}/orders/${id}/pay-sandbox`,
+        order_no: order.order_no,
+        amount: Number(order.amount),
+        sandbox: false,
+      },
+    };
+  }
+
   async pay(id: number, paymentMethod: string, userId: number) {
     const order = await this.ordersRepository.findOne({ where: { id } });
 
@@ -124,7 +159,7 @@ export class OrdersService {
       throw new ForbiddenException('订单状态不正确');
     }
 
-    // 模拟支付成功
+    // 模拟支付成功（或由 pay/notify 回调后不再走此处）
     await this.ordersRepository.update(id, {
       status: 'paid',
       payment_method: paymentMethod,
@@ -135,6 +170,29 @@ export class OrdersService {
       success: true,
       message: '支付成功',
     };
+  }
+
+  /** 支付网关异步回调（支付宝/微信 notify）；沙箱时可由前端 mock 调用 */
+  async payNotify(id: number, payload: { transaction_id?: string; mock?: boolean }) {
+    const order = await this.ordersRepository.findOne({ where: { id } });
+    if (!order) throw new NotFoundException('订单不存在');
+    if (order.status !== 'pending') {
+      return { success: true, message: '订单已处理' };
+    }
+
+    const isSandbox = process.env.APP_ENV !== 'production' || process.env.PAYMENT_SANDBOX === 'true';
+    if (payload.mock && !isSandbox) {
+      throw new ForbiddenException('生产环境禁止 mock 回调');
+    }
+
+    const transactionId = payload.transaction_id || `TXN${Date.now()}`;
+    await this.ordersRepository.update(id, {
+      status: 'paid',
+      transaction_id: transactionId,
+      payment_method: payload.mock ? 'sandbox' : undefined,
+    });
+
+    return { success: true, message: 'ok' };
   }
 
   async complete(id: number, userId: number) {

@@ -27,6 +27,13 @@ export class OrdersController {
     });
   }
 
+  @Get(':id/pay-prepare')
+  @ApiOperation({ summary: '获取支付参数/链接' })
+  @ApiResponse({ status: 200, description: '获取成功' })
+  async preparePay(@Param('id') id: string, @Request() req) {
+    return this.ordersService.preparePay(+id, req.user.id);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: '获取订单详情' })
   @ApiResponse({ status: 200, description: '获取成功' })
@@ -42,7 +49,7 @@ export class OrdersController {
   }
 
   @Post(':id/pay')
-  @ApiOperation({ summary: '支付订单' })
+  @ApiOperation({ summary: '支付订单（模拟/同步）' })
   @ApiResponse({ status: 200, description: '支付成功' })
   async pay(
     @Param('id') id: string,
@@ -50,6 +57,16 @@ export class OrdersController {
     @Request() req,
   ) {
     return this.ordersService.pay(+id, paymentMethod, req.user.id);
+  }
+
+  @Post(':id/pay-notify')
+  @ApiOperation({ summary: '支付网关异步回调（沙箱可 mock）' })
+  @ApiResponse({ status: 200, description: '处理成功' })
+  async payNotify(
+    @Param('id') id: string,
+    @Body() body: { transaction_id?: string; mock?: boolean },
+  ) {
+    return this.ordersService.payNotify(+id, body || {});
   }
 
   @Post(':id/complete')
