@@ -4,13 +4,22 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { SafeImage } from '@/components/SafeImage';
 
+const NAV_LINKS = [
+  { href: '/', label: '首页' },
+  { href: '/works', label: '作品' },
+  { href: '/spots', label: '打卡点' },
+  { href: '/bookings', label: '约拍' },
+  { href: '/orders', label: '订单' },
+  { href: '/articles', label: '经验' },
+];
+
 export function Header() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // 登录态由 Header 从 localStorage 恢复（access_token、user_data），避免刷新后闪退为未登录
   useEffect(() => {
-    // 检查登录状态
     const token = localStorage.getItem('access_token');
     const userData = localStorage.getItem('user_data');
     if (token && userData) {
@@ -39,45 +48,18 @@ export function Header() {
           </Link>
 
           <nav className="hidden md:flex space-x-8">
-            <Link
-              href="/"
-              className="text-gray-700 hover:text-indigo-600 transition"
-            >
-              首页
-            </Link>
-            <Link
-              href="/works"
-              className="text-gray-700 hover:text-indigo-600 transition"
-            >
-              作品
-            </Link>
-            <Link
-              href="/spots"
-              className="text-gray-700 hover:text-indigo-600 transition"
-            >
-              打卡点
-            </Link>
-            <Link
-              href="/bookings"
-              className="text-gray-700 hover:text-indigo-600 transition"
-            >
-              约拍
-            </Link>
-            <Link
-              href="/orders"
-              className="text-gray-700 hover:text-indigo-600 transition"
-            >
-              订单
-            </Link>
-            <Link
-              href="/articles"
-              className="text-gray-700 hover:text-indigo-600 transition"
-            >
-              经验
-            </Link>
+            {NAV_LINKS.map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                className="text-gray-700 hover:text-indigo-600 transition"
+              >
+                {label}
+              </Link>
+            ))}
           </nav>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             {isAuthenticated ? (
               <>
                 <Link
@@ -105,7 +87,8 @@ export function Header() {
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
+                  type="button"
+                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition min-h-[44px]"
                 >
                   退出
                 </button>
@@ -114,20 +97,52 @@ export function Header() {
               <>
                 <Link
                   href="/auth/login"
-                  className="px-4 py-2 text-gray-700 hover:text-indigo-600 transition"
+                  className="px-4 py-2 text-gray-700 hover:text-indigo-600 transition min-h-[44px] inline-flex items-center"
                 >
                   登录
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition min-h-[44px] inline-flex items-center"
                 >
                   注册
                 </Link>
               </>
             )}
+
+            {/* 移动端汉堡菜单按钮 */}
+            <button
+              type="button"
+              aria-label="打开菜单"
+              className="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 min-h-[44px] min-w-[44px] flex items-center justify-center"
+              onClick={() => setMobileMenuOpen((o) => !o)}
+            >
+              {mobileMenuOpen ? (
+                <span className="text-xl">✕</span>
+              ) : (
+                <span className="text-xl">☰</span>
+              )}
+            </button>
           </div>
         </div>
+
+        {/* 移动端折叠导航 */}
+        {mobileMenuOpen && (
+          <div className="md:hidden py-3 border-t">
+            <nav className="flex flex-col gap-1">
+              {NAV_LINKS.map(({ href, label }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className="block py-3 px-2 text-gray-700 hover:bg-gray-50 hover:text-indigo-600 rounded-lg min-h-[44px] flex items-center"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+        )}
       </div>
     </header>
   );

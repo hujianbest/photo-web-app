@@ -17,24 +17,24 @@ export function Footer() {
 
           <div>
             <h3 className="text-lg font-semibold mb-4">快速链接</h3>
-            <ul className="space-y-2">
+            <ul className="space-y-1">
               <li>
-                <Link href="/" className="text-gray-400 hover:text-white transition">
+                <Link href="/" className="block py-2 text-gray-400 hover:text-white transition">
                   首页
                 </Link>
               </li>
               <li>
-                <Link href="/works" className="text-gray-400 hover:text-white transition">
+                <Link href="/works" className="block py-2 text-gray-400 hover:text-white transition">
                   作品展示
                 </Link>
               </li>
               <li>
-                <Link href="/spots" className="text-gray-400 hover:text-white transition">
+                <Link href="/spots" className="block py-2 text-gray-400 hover:text-white transition">
                   打卡点
                 </Link>
               </li>
               <li>
-                <Link href="/bookings" className="text-gray-400 hover:text-white transition">
+                <Link href="/bookings" className="block py-2 text-gray-400 hover:text-white transition">
                   约拍平台
                 </Link>
               </li>
