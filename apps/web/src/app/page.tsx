@@ -11,17 +11,17 @@ export default function Home() {
               </div>
             </div>
             <nav className="flex space-x-8">
-              <a href="#" className="text-gray-700 hover:text-indigo-600">
+              <a href="/" className="text-gray-700 hover:text-indigo-600">
                 首页
               </a>
-              <a href="#" className="text-gray-700 hover:text-indigo-600">
+              <a href="/spots" className="text-gray-700 hover:text-indigo-600">
                 打卡点
               </a>
-              <a href="#" className="text-gray-700 hover:text-indigo-600">
+              <a href="/works" className="text-gray-700 hover:text-indigo-600">
                 作品
               </a>
-              <a href="#" className="text-gray-700 hover:text-indigo-600">
-                约拍
+              <a href="/auth/login" className="text-gray-700 hover:text-indigo-600">
+                登录
               </a>
             </nav>
           </div>
@@ -39,12 +39,12 @@ export default function Home() {
             发现拍摄地点，分享作品，约拍合作，记录成长
           </p>
           <div className="flex justify-center space-x-4">
-            <button className="px-8 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+            <a href="/spots" className="px-8 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
               开始探索
-            </button>
-            <button className="px-8 py-3 border-2 border-indigo-600 text-indigo-600 rounded-lg hover:bg-indigo-50 transition">
+            </a>
+            <a href="/works" className="px-8 py-3 border-2 border-indigo-600 text-indigo-600 rounded-lg hover:bg-indigo-50 transition">
               了解更多
-            </button>
+            </a>
           </div>
         </div>
 
