@@ -58,9 +58,17 @@ export default function ArticlesPage() {
       <Header />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">经验分享</h1>
-          <p className="text-gray-600">摄影技巧与心得</p>
+        <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">经验分享</h1>
+            <p className="text-gray-600">摄影技巧与心得</p>
+          </div>
+          <Link
+            href="/articles/new"
+            className="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium shrink-0"
+          >
+            写文章
+          </Link>
         </div>
 
         <div className="flex flex-wrap gap-2 mb-6">
