@@ -4,6 +4,14 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 
+// sharp 为可选依赖，未安装时缩略图与尺寸回退到占位
+let sharp: typeof import('sharp') | null = null;
+try {
+  sharp = require('sharp');
+} catch {
+  // 忽略
+}
+
 @Injectable()
 export class UploadService {
   constructor(private readonly configService: ConfigService) {}
@@ -159,25 +167,25 @@ export class UploadService {
   private async generateThumbnail(
     filePath: string,
   ): Promise<string | null> {
-    try {
-      // 这里应该使用sharp库来生成缩略图
-      // 由于sharp需要额外的依赖，暂时返回文件名
-      const ext = path.extname(filePath);
-      const basename = path.basename(filePath, ext);
-      const thumbnailFilename = `${basename}_thumb${ext}`;
-      const thumbnailPath = path.join(
-        path.dirname(filePath),
-        thumbnailFilename,
-      );
+    const basename = path.basename(filePath, path.extname(filePath));
+    const thumbnailFilename = `${basename}_thumb.jpg`;
+    const thumbnailPath = path.join(path.dirname(filePath), thumbnailFilename);
 
-      // 检查是否已存在缩略图
-      if (fs.existsSync(thumbnailPath)) {
-        return thumbnailFilename;
-      }
+    if (fs.existsSync(thumbnailPath)) {
+      return thumbnailFilename;
+    }
 
-      // 在生产环境中，使用sharp生成缩略图
-      // 目前返回null，前端会使用原图片
+    if (!sharp) {
       return null;
+    }
+
+    try {
+      const maxWidth = 400;
+      await sharp(filePath)
+        .resize(maxWidth, null, { withoutEnlargement: true })
+        .jpeg({ quality: 80 })
+        .toFile(thumbnailPath);
+      return thumbnailFilename;
     } catch (error) {
       console.error('生成缩略图失败:', error);
       return null;
@@ -188,19 +196,18 @@ export class UploadService {
     width: number;
     height: number;
   }> {
+    if (!sharp) {
+      return { width: 0, height: 0 };
+    }
     try {
-      // 这里应该使用sharp库获取图片信息
-      // 暂时返回默认值
+      const meta = await sharp(filePath).metadata();
       return {
-        width: 1920,
-        height: 1080,
+        width: meta.width ?? 0,
+        height: meta.height ?? 0,
       };
     } catch (error) {
       console.error('获取图片信息失败:', error);
-      return {
-        width: 0,
-        height: 0,
-      };
+      return { width: 0, height: 0 };
     }
   }
 }
