@@ -28,7 +28,7 @@ export default function ProfilePage() {
   useEffect(() => {
     const raw = typeof window !== 'undefined' ? localStorage.getItem('user_data') : null;
     if (!raw) {
-      router.replace('/auth/login');
+      router.replace('/auth/login?redirect=' + encodeURIComponent('/profile'));
       return;
     }
     try {
@@ -36,7 +36,7 @@ export default function ProfilePage() {
       setUser(u);
       if (u?.id) fetchStats(u.id);
     } catch {
-      router.replace('/auth/login');
+      router.replace('/auth/login?redirect=' + encodeURIComponent('/profile'));
     } finally {
       setLoading(false);
     }

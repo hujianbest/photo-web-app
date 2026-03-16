@@ -18,7 +18,7 @@ export default function ProfileEditPage() {
   useEffect(() => {
     const raw = typeof window !== 'undefined' ? localStorage.getItem('user_data') : null;
     if (!raw) {
-      router.replace('/auth/login');
+      router.replace('/auth/login?redirect=' + encodeURIComponent('/profile/edit'));
       return;
     }
     try {
@@ -26,7 +26,7 @@ export default function ProfileEditPage() {
       setUserId(u?.id ?? null);
       setForm({ username: u?.username ?? '', bio: u?.bio ?? '' });
     } catch {
-      router.replace('/auth/login');
+      router.replace('/auth/login?redirect=' + encodeURIComponent('/profile/edit'));
     } finally {
       setLoading(false);
     }

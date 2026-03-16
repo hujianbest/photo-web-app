@@ -38,7 +38,7 @@ export function NotificationsProvider({
     if (!token) return;
     try {
       const res = await apiJson<{ data?: { unread_count?: number } }>(
-        '/notifications/unread-count'
+        '/notifications/count'
       );
       const n = res?.data?.unread_count ?? 0;
       setUnreadCount(n);

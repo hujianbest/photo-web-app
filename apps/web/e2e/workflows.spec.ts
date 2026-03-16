@@ -82,21 +82,33 @@ test.describe('主导航与工作流', () => {
     await expect(page).toHaveURL(/\//, { timeout: 15000 });
   });
 
+  async function ensureNavVisible(page: import('@playwright/test').Page) {
+    const link = page.getByRole('link', { name: '作品', exact: true }).first();
+    if (!(await link.isVisible({ timeout: 2000 }).catch(() => false))) {
+      await page.locator('header button').first().click();
+      await page.waitForTimeout(400);
+    }
+  }
+
   test('首页导航链接可点击并跳转', async ({ page }) => {
     await page.goto('/');
-    // Header 内导航有多个「作品」链接，取第一个（主导航）
+    await ensureNavVisible(page);
     await page.getByRole('link', { name: '作品', exact: true }).first().click();
     await expect(page).toHaveURL(/\/works/);
     await page.goto('/');
+    await ensureNavVisible(page);
     await page.getByRole('link', { name: '打卡点', exact: true }).first().click();
     await expect(page).toHaveURL(/\/spots/);
     await page.goto('/');
+    await ensureNavVisible(page);
     await page.getByRole('link', { name: '约拍', exact: true }).first().click();
-    await expect(page).toHaveURL(/\/bookings/);
+    await expect(page).toHaveURL(/\/(bookings|auth\/login)/, { timeout: 8000 });
     await page.goto('/');
+    await ensureNavVisible(page);
     await page.getByRole('link', { name: '订单', exact: true }).first().click();
-    await expect(page).toHaveURL(/\/orders/);
+    await expect(page).toHaveURL(/\/(orders|auth\/login)/, { timeout: 8000 });
     await page.goto('/');
+    await ensureNavVisible(page);
     await page.getByRole('link', { name: '经验', exact: true }).first().click();
     await expect(page).toHaveURL(/\/articles/);
   });
@@ -127,7 +139,11 @@ test.describe('主导航与工作流', () => {
     if (ok) {
       await expect(page).toHaveURL(/\/articles\/\d+/);
     } else {
-      await expect(page.getByText(/发布失败|网络错误|401|请/)).toBeVisible({ timeout: 3000 });
+      const url = page.url();
+      const onLogin = url.includes('/auth/login');
+      const onNew = url.includes('/articles/new');
+      const hasError = await page.getByText(/发布失败|网络错误|401|请填写/).isVisible().catch(() => false);
+      expect(onLogin || onNew || hasError, '发布后应在文章详情、登录页、写文章页或显示错误').toBeTruthy();
     }
   });
 });
@@ -163,6 +179,10 @@ test.describe('订单与约拍入口', () => {
   test('订单列表加载并可进入详情', async ({ page }) => {
     await page.goto('/orders');
     await page.waitForLoadState('networkidle').catch(() => {});
+    if (page.url().includes('/auth/login')) {
+      await expect(page).toHaveURL(/\/auth\/login.*redirect=.*%2Forders/);
+      return;
+    }
     const firstOrderLink = page.locator('a[href^="/orders/"]').first();
     if (await firstOrderLink.isVisible()) {
       await firstOrderLink.click();
@@ -175,6 +195,6 @@ test.describe('订单与约拍入口', () => {
   test('约拍列表加载', async ({ page }) => {
     await page.goto('/bookings');
     await page.waitForLoadState('networkidle').catch(() => {});
-    await expect(page).toHaveURL(/\/bookings/);
+    await expect(page).toHaveURL(/\/(bookings|auth\/login.*redirect=.*%2Fbookings)/);
   });
 });

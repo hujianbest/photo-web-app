@@ -1,12 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { API_BASE } from '@/lib/api';
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get('redirect');
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -34,7 +36,8 @@ export default function LoginPage() {
         localStorage.setItem('access_token', data.data.access_token);
         localStorage.setItem('refresh_token', data.data.refresh_token);
         localStorage.setItem('user_data', JSON.stringify(data.data.user));
-        router.push('/');
+        const target = redirect && redirect.startsWith('/') ? redirect : '/';
+        router.push(target);
       } else {
         setError(data.message || '登录失败');
       }
