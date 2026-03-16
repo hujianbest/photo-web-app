@@ -36,16 +36,6 @@ npm run build
 # Run production server
 npm run start:prod
 
-# Run tests
-npm run test              # All tests
-npm run test:e2e         # E2E tests only
-npm run test:cov         # Coverage report
-
-# Database operations
-npm run db:migrate       # Run pending migrations
-npm run db:rollback      # Rollback last migration
-npm run db:seed          # Seed database with test data
-
 # Code quality
 npm run lint             # Lint code
 npm run format           # Format code with Prettier
@@ -68,6 +58,10 @@ npm run start
 npm run lint             # ESLint
 npm run typecheck        # TypeScript type checking
 npm run format           # Prettier formatting
+
+# E2E Testing (Playwright)
+npm run test:e2e         # Run E2E tests
+npm run test:e2e:ui       # Run E2E tests with UI mode
 ```
 
 ### AI Service (FastAPI/Python)
@@ -104,10 +98,11 @@ photo-web-app/
 │   ├── types/         # Shared TypeScript types
 │   ├── constants/     # Shared constants
 │   └── utils/         # Shared utilities
-└── infrastructure/
-    ├── database/       # SQL schema, migrations, seeds
-    ├── docker/        # Dockerfiles
-    └── nginx/         # Nginx configuration
+├── infrastructure/
+│   ├── database/       # SQL schema, migrations, seeds
+│   ├── docker/        # Dockerfiles
+│   └── nginx/         # Nginx configuration
+└── design-system/     # Design system documentation
 ```
 
 ### API Architecture (NestJS)
@@ -124,13 +119,23 @@ photo-web-app/
 - `auth/` - JWT authentication, registration, password reset
 - `users/` - User CRUD, profile management
 - `upload/` - File upload handling
+- `notifications/` - WebSocket real-time notifications
+- `works/` - Photo portfolio management
+- `spots/` - Check-in spots (geospatial)
+- `bookings/` - Photography booking platform
+- `orders/` - Order management
+- `articles/` - Article/experience sharing
 
 **Global Configuration** (in `main.ts`):
 - CORS enabled for frontend origins
 - Global ValidationPipe with class-validator (whitelist, transform, forbidNonWhitelisted)
+- GlobalExceptionFilter for friendly error messages
 - Static files served from `/uploads/` at `/uploads/` route
 - API prefix: `/api/v1`
 - Swagger docs at `/api/docs`
+- WebSocket support via Socket.io adapter
+- Increased request body limit: 50MB for file uploads
+- Server timeout: 120s for large file uploads
 
 **Database**: PostgreSQL with TypeORM, entities auto-discovered from `**/*.entity{.ts,.js}`
 
@@ -138,13 +143,46 @@ photo-web-app/
 
 **App Router**: Pages in `apps/web/src/app/` using Next.js 14 App Router
 
-**Styling**: TailwindCSS v4 for utility-first styling
+**Styling**: TailwindCSS v3 for utility-first styling
+
+**Real-time Features**: Socket.io client integration via `NotificationsSocketWrapper` component in root layout
 
 ### Shared Services
 - **PostgreSQL**: Main database with PostGIS extension for geospatial queries
 - **Redis**: Caching and session storage
 - **RabbitMQ**: Message queue for async jobs (via Bull queues)
 - **MinIO**: S3-compatible object storage for file uploads
+
+## Design System
+
+### Location
+- Global: `design-system/MASTER.md` - Source of truth for all design rules
+- Page-specific: `design-system/pages/*.md` - Per-page overrides
+
+### Design Style
+- **Current Style**: Apple-like minimalism (inspired by Apple website)
+- **Philosophy**: Clean, spacious, white backgrounds with single blue accent
+- **Color Palette**:
+  - Background: `#FFFFFF` / `#FBFBFD` (white, neutral-50)
+  - Primary text: `#1D1D1F` (neutral-900)
+  - Secondary text: `#6E6E73` (neutral-500)
+  - Accent/CTA: `#0071E3` (blue-600)
+  - Borders: `#D2D2D7` (neutral-200)
+
+### UI/UX Guidelines
+When building UI components, consult `.cursor/skills/ui-ux-pro-max/SKILL.md` for:
+- Comprehensive UI/UX patterns and best practices
+- Anti-patterns to avoid
+- Stack-specific implementation guidelines
+
+### Key Principles
+- No emojis as icons (use SVG from Lucide React)
+- Cursor pointer on all clickable elements
+- Stable hover states (no scale transforms)
+- System font stack: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif
+- Large headings with tracking-tight
+- Minimum 44px touch targets
+- Smooth transitions (150-200ms)
 
 ## Code Patterns & Conventions
 
@@ -164,6 +202,12 @@ All API endpoints return consistent response structure:
 - JWT auth guard: `@UseGuards(JwtAuthGuard)` decorator
 - Current user access: `@CurrentUser()` decorator in controllers
 - Verification codes stored in-memory (should migrate to Redis)
+
+### WebSocket Real-time Notifications
+- Socket.io server configured in `main.ts` with `IoAdapter`
+- Frontend connects via `NotificationsSocketWrapper` in root layout
+- JWT-based WebSocket authentication
+- Real-time unread notification badge on header
 
 ### DTO Validation
 Use `class-validator` decorators in DTOs:
@@ -198,6 +242,7 @@ Copy `.env.example` to `.env` and configure:
 - JWT secret and expiration
 - File upload settings
 - Third-party API keys (Alipay, WeChat Pay, SMS, etc.)
+- Map API keys (AMAP_KEY for Amap/Gaode)
 
 ## Service URLs (Development)
 - Web frontend: http://localhost:3000
@@ -210,14 +255,27 @@ Copy `.env.example` to `.env` and configure:
 ## Database
 - PostgreSQL on port 5432
 - Database name: `photo_platform`
-- Default schema in `infrastructure/database/schema.sql`
+- PostGIS extension for geospatial queries
 - Connection via TypeORM in `app.module.ts`
+
+## Testing
+
+### E2E Testing (Playwright)
+- Test files in `apps/web/e2e/`
+- Configuration: `apps/web/playwright.config.ts`
+- Run with: `npm run test:e2e` (headless) or `npm run test:e2e:ui` (with UI)
+- Browsers: Chromium, Mobile (Pixel 5)
+- Retries: 2 in CI, 0 locally
+- Auto-starts dev server in CI mode
 
 ## Important Notes
 - The API uses `DB_SYNCHRONIZE` env var for schema sync - disable in production
 - File uploads stored locally in `uploads/` directory (MinIO for production)
 - AI service uses external models (Real-ESRGAN, Stable Diffusion) - model files not included
-- Project is in early development - many modules are scaffolds or incomplete
+- Project uses Apple-inspired minimal design system - check `design-system/MASTER.md`
+- WebSocket notifications via Socket.io with JWT authentication
+- Request body limit increased to 50MB for large file uploads
+- Server timeout set to 120s for large file uploads
 
 ## Common Patterns
 
@@ -229,7 +287,12 @@ Copy `.env.example` to `.env` and configure:
 5. Create controller: HTTP handlers in `*.controller.ts`
 6. Import module in `app.module.ts`
 
-### Database Migration Flow
-1. Modify entity or create new migration file
-2. Run `npm run db:migrate` to apply
-3. Use `npm run db:rollback` to revert if needed
+### Building UI Components
+1. Check `design-system/MASTER.md` for global design rules
+2. Check `design-system/pages/<page-name>.md` for page-specific overrides
+3. Consult `.cursor/skills/ui-ux-pro-max/SKILL.md` for UI/UX best practices
+4. Use Lucide React icons only (no emojis)
+5. Ensure proper cursor-pointer on interactive elements
+6. Maintain Apple-like minimalism with proper spacing
+7. Test responsive design (mobile, tablet, desktop)
+8. Verify accessibility (alt text, labels, contrast)
