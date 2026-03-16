@@ -1,8 +1,5 @@
 import './globals.css';
-import { Inter } from 'next/font/google';
 import { NotificationsSocketWrapper } from '@/components/NotificationsSocketWrapper';
-
-const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
   title: '摄影师服务平台',
@@ -16,7 +13,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh-CN">
-      <body className={inter.className}>
+      <body className="antialiased">
         <NotificationsSocketWrapper>{children}</NotificationsSocketWrapper>
       </body>
     </html>

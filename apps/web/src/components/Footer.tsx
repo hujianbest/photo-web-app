@@ -1,93 +1,89 @@
 import Link from 'next/link';
+import { Camera } from 'lucide-react';
 
 export function Footer() {
   return (
-    <footer className="bg-gray-800 text-white mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="bg-neutral-100 border-t border-neutral-200 mt-auto">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           <div>
-            <div className="flex items-center space-x-2 mb-4">
-              <span className="text-2xl">📸</span>
-              <span className="text-xl font-bold">摄影师服务平台</span>
+            <div className="flex items-center gap-2 mb-4">
+              <Camera className="w-5 h-5 text-neutral-600" aria-hidden />
+              <span className="text-base font-semibold text-neutral-900 tracking-tight">
+                摄影师服务平台
+              </span>
             </div>
-            <p className="text-gray-400">
+            <p className="text-sm text-neutral-500 leading-relaxed max-w-xs">
               面向业余摄影师的综合服务平台，提供打卡点推荐、约拍平台、作品展示等功能。
             </p>
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold mb-4">快速链接</h3>
-            <ul className="space-y-1">
-              <li>
-                <Link href="/" className="block py-2 text-gray-400 hover:text-white transition">
-                  首页
-                </Link>
-              </li>
-              <li>
-                <Link href="/works" className="block py-2 text-gray-400 hover:text-white transition">
-                  作品展示
-                </Link>
-              </li>
-              <li>
-                <Link href="/spots" className="block py-2 text-gray-400 hover:text-white transition">
-                  打卡点
-                </Link>
-              </li>
-              <li>
-                <Link href="/bookings" className="block py-2 text-gray-400 hover:text-white transition">
-                  约拍平台
-                </Link>
-              </li>
+            <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-4">
+              快速链接
+            </h3>
+            <ul className="space-y-3">
+              {[
+                { href: '/', label: '首页' },
+                { href: '/works', label: '作品展示' },
+                { href: '/spots', label: '打卡点' },
+                { href: '/bookings', label: '约拍平台' },
+              ].map(({ href, label }) => (
+                <li key={href}>
+                  <Link
+                    href={href}
+                    className="text-sm text-neutral-600 hover:text-blue-600 transition-colors duration-200 cursor-pointer"
+                  >
+                    {label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold mb-4">帮助中心</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/help/faq" className="text-gray-400 hover:text-white transition">
-                  常见问题
-                </Link>
-              </li>
-              <li>
-                <Link href="/help/guide" className="text-gray-400 hover:text-white transition">
-                  使用指南
-                </Link>
-              </li>
-              <li>
-                <Link href="/help/contact" className="text-gray-400 hover:text-white transition">
-                  联系我们
-                </Link>
-              </li>
-              <li>
-                <Link href="/help/terms" className="text-gray-400 hover:text-white transition">
-                  服务条款
-                </Link>
-              </li>
+            <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-4">
+              帮助中心
+            </h3>
+            <ul className="space-y-3">
+              {[
+                { href: '/help/faq', label: '常见问题' },
+                { href: '/help/guide', label: '使用指南' },
+                { href: '/help/contact', label: '联系我们' },
+                { href: '/help/terms', label: '服务条款' },
+              ].map(({ href, label }) => (
+                <li key={href}>
+                  <Link
+                    href={href}
+                    className="text-sm text-neutral-600 hover:text-blue-600 transition-colors duration-200 cursor-pointer"
+                  >
+                    {label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold mb-4">关注我们</h3>
-            <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-white transition">
-                微信
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition">
-                微博
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition">
-                抖音
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition">
-                B站
-              </a>
+            <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-4">
+              关注我们
+            </h3>
+            <div className="flex flex-wrap gap-4">
+              {['微信', '微博', '抖音', 'B站'].map((name) => (
+                <a
+                  key={name}
+                  href="#"
+                  className="text-sm text-neutral-600 hover:text-blue-600 transition-colors duration-200 cursor-pointer"
+                >
+                  {name}
+                </a>
+              ))}
             </div>
           </div>
         </div>
 
-        <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; 2024 摄影师服务平台. All rights reserved.</p>
+        <div className="mt-12 pt-8 border-t border-neutral-200 text-center text-sm text-neutral-500">
+          <p>&copy; {new Date().getFullYear()} 摄影师服务平台. All rights reserved.</p>
         </div>
       </div>
     </footer>

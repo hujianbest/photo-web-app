@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { Camera, Bell, Menu, X } from 'lucide-react';
 import { SafeImage } from '@/components/SafeImage';
 import { useNotifications } from '@/context/NotificationsContext';
 
@@ -21,7 +22,6 @@ export function Header() {
   const notifications = useNotifications();
   const unreadCount = notifications?.unreadCount ?? 0;
 
-  // 登录态由 Header 从 localStorage 恢复（access_token、user_data），避免刷新后闪退为未登录
   useEffect(() => {
     const token = localStorage.getItem('access_token');
     const userData = localStorage.getItem('user_data');
@@ -40,64 +40,70 @@ export function Header() {
   };
 
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
-          <Link href="/" className="flex items-center space-x-2">
-            <span className="text-2xl">📸</span>
-            <span className="text-xl font-bold text-indigo-600">
+    <header className="bg-white/80 backdrop-blur-xl sticky top-0 z-50 border-b border-neutral-200/80">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-12 sm:h-14">
+          <Link
+            href="/"
+            className="flex items-center gap-2 cursor-pointer text-neutral-900 hover:opacity-80 transition-opacity duration-200"
+            aria-label="首页"
+          >
+            <Camera className="w-6 h-6 text-neutral-900" aria-hidden />
+            <span className="text-lg font-semibold text-neutral-900 tracking-tight">
               摄影师服务平台
             </span>
           </Link>
 
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex items-center gap-8">
             {NAV_LINKS.map(({ href, label }) => (
               <Link
                 key={href}
                 href={href}
-                className="text-gray-700 hover:text-indigo-600 transition"
+                className="text-sm text-neutral-600 hover:text-blue-600 transition-colors duration-200 cursor-pointer"
               >
                 {label}
               </Link>
             ))}
           </nav>
 
-          <div className="flex items-center space-x-2 sm:space-x-4">
+          <div className="flex items-center gap-1 sm:gap-2">
             {isAuthenticated ? (
               <>
                 <Link
                   href="/notifications"
-                  className="relative text-gray-700 hover:text-indigo-600 transition inline-flex items-center min-h-[44px]"
+                  className="relative inline-flex items-center justify-center w-10 h-10 rounded-full text-neutral-600 hover:text-blue-600 hover:bg-neutral-100 transition-colors duration-200 cursor-pointer"
                   aria-label={unreadCount > 0 ? `通知，${unreadCount} 条未读` : '通知'}
                 >
-                  🔔
+                  <Bell className="w-5 h-5" aria-hidden />
                   {unreadCount > 0 && (
-                    <span className="absolute -top-0.5 -right-1 min-w-[18px] h-[18px] rounded-full bg-red-500 text-white text-xs flex items-center justify-center px-1">
+                    <span className="absolute top-1.5 right-1.5 min-w-[18px] h-[18px] rounded-full bg-blue-600 text-white text-xs flex items-center justify-center">
                       {unreadCount > 99 ? '99+' : unreadCount}
                     </span>
                   )}
                 </Link>
                 <Link
                   href="/profile"
-                  className="flex items-center space-x-2"
+                  className="flex items-center gap-2 min-h-[40px] px-2 rounded-full hover:bg-neutral-100 transition-colors duration-200 cursor-pointer"
                 >
                   {user?.avatar_url ? (
                     <SafeImage
                       src={user.avatar_url}
-                      alt="avatar"
+                      alt={user?.username || '用户头像'}
                       className="w-8 h-8 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white">
-                      {user?.username?.[0]?.toUpperCase()}
+                    <div className="w-8 h-8 rounded-full bg-neutral-300 flex items-center justify-center text-neutral-700 text-sm font-medium">
+                      {user?.username?.[0]?.toUpperCase() ?? '?'}
                     </div>
                   )}
-                  <span className="text-gray-700">{user?.username}</span>
+                  <span className="text-sm text-neutral-700 font-medium hidden sm:inline">
+                    {user?.username}
+                  </span>
                 </Link>
                 <button
-                  onClick={handleLogout}
                   type="button"
-                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition min-h-[44px]"
+                  onClick={handleLogout}
+                  className="text-sm text-neutral-600 hover:text-blue-600 transition-colors duration-200 cursor-pointer px-3 py-2 rounded-full hover:bg-neutral-100"
                 >
                   退出
                 </button>
@@ -106,44 +112,42 @@ export function Header() {
               <>
                 <Link
                   href="/auth/login"
-                  className="px-4 py-2 text-gray-700 hover:text-indigo-600 transition min-h-[44px] inline-flex items-center"
+                  className="text-sm text-neutral-600 hover:text-blue-600 transition-colors duration-200 cursor-pointer px-3 py-2 rounded-full hover:bg-neutral-100"
                 >
                   登录
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition min-h-[44px] inline-flex items-center"
+                  className="text-sm text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200 cursor-pointer px-4 py-2 rounded-full font-medium"
                 >
                   注册
                 </Link>
               </>
             )}
 
-            {/* 移动端汉堡菜单按钮 */}
             <button
               type="button"
-              aria-label="打开菜单"
-              className="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 min-h-[44px] min-w-[44px] flex items-center justify-center"
+              aria-label={mobileMenuOpen ? '关闭菜单' : '打开菜单'}
+              className="md:hidden w-10 h-10 flex items-center justify-center rounded-full text-neutral-600 hover:bg-neutral-100 transition-colors duration-200 cursor-pointer"
               onClick={() => setMobileMenuOpen((o) => !o)}
             >
               {mobileMenuOpen ? (
-                <span className="text-xl">✕</span>
+                <X className="w-5 h-5" aria-hidden />
               ) : (
-                <span className="text-xl">☰</span>
+                <Menu className="w-5 h-5" aria-hidden />
               )}
             </button>
           </div>
         </div>
 
-        {/* 移动端折叠导航 */}
         {mobileMenuOpen && (
-          <div className="md:hidden py-3 border-t">
-            <nav className="flex flex-col gap-1">
+          <div className="md:hidden py-4 border-t border-neutral-200">
+            <nav className="flex flex-col gap-0">
               {NAV_LINKS.map(({ href, label }) => (
                 <Link
                   key={href}
                   href={href}
-                  className="block py-3 px-2 text-gray-700 hover:bg-gray-50 hover:text-indigo-600 rounded-lg min-h-[44px] flex items-center"
+                  className="block py-3 px-2 text-sm text-neutral-700 hover:text-blue-600 transition-colors duration-200 cursor-pointer"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {label}
