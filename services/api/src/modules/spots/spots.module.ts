@@ -9,10 +9,12 @@ import { CheckinsController } from './checkins.controller';
 import { CheckinsService } from './checkins.service';
 import { CheckinLikesController } from './checkin-likes.controller';
 import { CheckinLikesService } from './checkin-likes.service';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([CheckinSpot, Checkin, CheckinLike]),
+    UsersModule,
   ],
   controllers: [
     SpotsController,

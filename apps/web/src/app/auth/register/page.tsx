@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { API_BASE } from '@/lib/api';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -28,7 +29,7 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8000/api/v1/auth/register', {
+      const response = await fetch(`${API_BASE}/api/v1/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -51,8 +52,13 @@ export default function RegisterPage() {
       } else {
         setError(data.message || '注册失败');
       }
-    } catch (error) {
-      setError('网络错误，请稍后重试');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : '';
+      if (msg.includes('Failed to fetch') || msg.includes('NetworkError') || msg.includes('Load failed')) {
+        setError('无法连接服务器，请确认 API 服务已启动（如 npm run start:dev），并检查网络或 NEXT_PUBLIC_API_URL 配置');
+      } else {
+        setError('网络错误，请稍后重试');
+      }
     } finally {
       setLoading(false);
     }

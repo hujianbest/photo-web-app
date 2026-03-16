@@ -2,7 +2,7 @@
  * 统一 API 请求封装：自动附带 Token，401 时清除登录态并跳转登录页
  */
 
-const API_BASE =
+export const API_BASE =
   typeof window !== 'undefined'
     ? (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000')
     : '';

@@ -9,10 +9,12 @@ import { WorkLike } from './entities/work-likes.entity';
 import { WorkCommentsController } from './work-comments.controller';
 import { WorkCommentsService } from './work-comments.service';
 import { WorkComment } from './entities/work-comments.entity';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Work, WorkLike, WorkComment]),
+    UsersModule,
   ],
   controllers: [
     WorksController,
