@@ -37,7 +37,11 @@ export default function LoginPage() {
         localStorage.setItem('refresh_token', data.data.refresh_token);
         localStorage.setItem('user_data', JSON.stringify(data.data.user));
         const target = redirect && redirect.startsWith('/') ? redirect : '/';
-        router.push(target);
+        if (target !== '/' && redirect) {
+          window.location.href = target;
+        } else {
+          router.push(target);
+        }
       } else {
         setError(data.message || '登录失败');
       }

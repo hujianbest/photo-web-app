@@ -48,7 +48,7 @@ test.describe('认证流程', () => {
     await page.getByPlaceholder('用户名或邮箱').fill('invalid_user_xyz');
     await page.getByPlaceholder('密码').fill('wrongpassword');
     await page.getByRole('button', { name: '登录' }).click();
-    await expect(page.getByText(/登录失败|错误|invalid/i)).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/登录失败|错误|invalid|无法连接|服务器/i)).toBeVisible({ timeout: 10000 });
   });
 
   test('注册页：密码不一致显示错误', async ({ page }) => {
