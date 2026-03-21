@@ -12,6 +12,7 @@ import { BookingsModule } from './modules/bookings/bookings.module';
 import { OrdersModule } from './modules/orders/orders.module';
 import { ArticlesModule } from './modules/articles/articles.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { MessagesModule } from './modules/messages/messages.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     OrdersModule,
     ArticlesModule,
     NotificationsModule,
+    MessagesModule,
   ],
   controllers: [AppController],
   providers: [],
