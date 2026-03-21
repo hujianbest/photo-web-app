@@ -6,7 +6,44 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A comprehensive photography platform for amateur photographers supporting check-in spots, booking platform, portfolio showcase, experience sharing, and AI-enhanced photo editing. Multi-platform support: Web (Next.js), Mobile (React Native), Mini-programs (uni-app).
 
-## Development Commands
+## Project Status
+
+### Current Phase: P0 Complete (Foundation UI)
+
+**Completed Tasks (P0)**:
+- ✅ Homepage redesign with Hero Carousel, Stats Bar, Featured Works/Spots, Community Feed
+- ✅ Works page with masonry layout for photo portfolio showcase
+- ✅ Spots page with map/list toggle view for check-in locations
+- ✅ Booking cards with enhanced design and functionality
+- ✅ User profile header with comprehensive user information display
+
+**Recent Commits**:
+- `5b71af1` feat(web): integrate BookingCard and UserProfileHeader into pages
+- `8518d91` feat(web): add BookingCard and UserProfileHeader components
+- `7ff8720` feat(web): add map/list toggle view for spots page
+- `f4eb28a` feat(web): add masonry layout for works page
+- `c85d46c` feat(web): redesign homepage with hero carousel, stats bar, featured content
+
+**New Components Added**:
+- `HeroCarousel` - Auto-rotating hero section with featured content
+- `StatsBar` - Platform statistics display bar
+- `FeaturedWorks` - Curated photography works showcase
+- `FeaturedSpots` - Highlighted check-in locations
+- `CommunityFeed` - Latest community activity stream
+- `WorksMasonry` - Masonry grid layout for photo portfolio
+- `SpotsMapView` - Dual view (map/list) for spots exploration
+- `BookingCard` - Enhanced booking request cards
+- `UserProfileHeader` - Comprehensive user profile header component
+
+### Next Steps: P1 (Social Features)
+
+**Planned Features**:
+- 🔜 Follow System - User following/followers functionality
+- 🔜 Direct Messages - Private messaging between users
+- 🔜 Topic Tags - Hashtag system for content categorization
+- 🔜 Leaderboards - Ranking system for photographers, spots, and popular content
+
+### Development Commands
 
 ### Infrastructure
 ```bash
