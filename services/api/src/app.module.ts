@@ -13,6 +13,7 @@ import { OrdersModule } from './modules/orders/orders.module';
 import { ArticlesModule } from './modules/articles/articles.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { MessagesModule } from './modules/messages/messages.module';
+import { TagsModule } from './modules/tags/tags.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { MessagesModule } from './modules/messages/messages.module';
     ArticlesModule,
     NotificationsModule,
     MessagesModule,
+    TagsModule,
   ],
   controllers: [AppController],
   providers: [],
