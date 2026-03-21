@@ -8,7 +8,7 @@
     "lint": "next lint",
     "test": "playwright test",
     "test:e2e": "playwright test --project=chromium",
-    "test:ui": "playwright test --ui"
+    "test:ui": "playwright test --ui",
     "test:debug": "playwright test --debug"
   },
   "dependencies": {
