@@ -1,46 +1,33 @@
 {
   "name": "web",
   "version": "1.0.0",
-  "description": "摄影师服务平台Web前端",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit",
-    "format": "prettier --write .",
-    "test": "echo \"Tests not configured yet\" && exit 1",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test": "playwright test",
+    "test:e2e": "playwright test --project=chromium",
+    "test:ui": "playwright test --ui"
+    "test:debug": "playwright test --debug"
   },
   "dependencies": {
-    "@tiptap/extension-image": "^3.20.4",
-    "@tiptap/extension-placeholder": "^3.20.4",
-    "@tiptap/react": "^3.20.4",
-    "@tiptap/starter-kit": "^3.20.4",
-    "embla-carousel-react": "^8.6.0",
-    "framer-motion": "^12.38.0",
-    "lucide-react": "^0.577.0",
-    "next": "^14.1.0",
+    "next": "14.2.35",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "socket.io-client": "^4.7.5"
+    "lucide-react": "^0.263.1",
+    "embla-carousel-react": "^8.0.1",
+    "framer-motion": "^11.0.0",
+    "@tiptap/react": "^2.1.0",
+    "@tiptap/starter-kit": "^2.1.0",
+    "@tiptap/extension-placeholder": "^2.1.0",
+    "@tiptap/extension-image": "^2.1.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.58.2",
-    "@types/node": "^20.11.5",
-    "@types/react": "^18.2.48",
-    "@types/react-dom": "^18.2.18",
-    "autoprefixer": "^10.4.17",
-    "postcss": "^8.4.33",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5.3.3"
-  },
-  "keywords": [
-    "photography",
-    "platform",
-    "nextjs"
-  ],
-  "author": "",
-  "license": "MIT"
+    "@playwright/test": "^1.40.0",
+    "@types/node": "^20.3.1",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "typescript": "^5.1.3"
+  }
 }
