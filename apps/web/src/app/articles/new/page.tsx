@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import { RichTextEditor } from '@/components/RichTextEditor';
+import { ErrorMessage } from '@/components/ErrorMessage';
+import { Loading } from '@/components/Loading';
 import { apiFetch } from '@/lib/api';
 
 export default function NewArticlePage() {
@@ -65,9 +68,7 @@ export default function NewArticlePage() {
         <div className="bg-white rounded-lg shadow-md p-6">
           <h1 className="text-xl font-bold text-gray-900 mb-6">写文章</h1>
           <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
-              <p className="text-sm text-red-600 bg-red-50 p-2 rounded">{error}</p>
-            )}
+            {error && <ErrorMessage message={error} onDismiss={() => setError('')} />}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">标题 *</label>
               <input
@@ -101,20 +102,19 @@ export default function NewArticlePage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">正文 *</label>
-              <textarea
-                value={form.content}
-                onChange={(e) => setForm((f) => ({ ...f, content: e.target.value }))}
-                rows={12}
-                className="w-full border rounded px-3 py-2 font-mono text-sm"
-                placeholder="支持纯文本，后续可接入富文本编辑器"
+              <RichTextEditor
+                content={form.content}
+                onChange={(content) => setForm((f) => ({ ...f, content }))}
+                placeholder="开始撰写你的文章..."
               />
             </div>
             <div className="flex gap-3">
               <button
                 type="submit"
                 disabled={loading}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 flex items-center gap-2"
               >
+                {loading && <Loading size="sm" />}
                 {loading ? '发布中...' : '发布'}
               </button>
               <Link
