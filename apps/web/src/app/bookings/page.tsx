@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import { BookingCard } from '@/components/BookingCard';
 import { apiFetch } from '@/lib/api';
 
 interface BookingItem {
@@ -15,7 +15,11 @@ interface BookingItem {
   time_range: string | null;
   location: string | null;
   status: string;
-  requester: { id: number; username: string; avatar_url: string | null };
+  style?: string;
+  budget?: number;
+  views?: number;
+  comments?: number;
+  requester: { id: number; username: string; avatar_url: string | null; rating?: number };
   target_user: { id: number; username: string; avatar_url: string | null };
   created_at: string;
 }
@@ -117,32 +121,27 @@ export default function BookingsPage() {
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {bookings.map((b) => (
-                <Link key={b.id} href={`/bookings/${b.id}`}>
-                  <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition p-4 h-full">
-                    <div className="flex justify-between items-start mb-2">
-                      <span className="text-xs px-2 py-0.5 rounded bg-gray-100 text-gray-600">
-                        {TYPE_LABEL[b.type] ?? b.type}
-                      </span>
-                      <span className={`text-xs px-2 py-0.5 rounded ${
-                        b.status === 'pending' ? 'bg-amber-100 text-amber-800' :
-                        b.status === 'accepted' || b.status === 'completed' ? 'bg-green-100 text-green-800' :
-                        'bg-gray-100 text-gray-600'
-                      }`}>
-                        {STATUS_LABEL[b.status] ?? b.status}
-                      </span>
-                    </div>
-                    <h3 className="font-bold text-gray-900 mb-1 line-clamp-1">
-                      {b.title || '无标题'}
-                    </h3>
-                    <p className="text-sm text-gray-600 line-clamp-2 mb-2">{b.description}</p>
-                    <p className="text-xs text-gray-500">
-                      日期 {b.date} {b.time_range ? `· ${b.time_range}` : ''}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      发起: {b.requester?.username ?? '-'} → {b.target_user?.username ?? '-'}
-                    </p>
-                  </div>
-                </Link>
+                <BookingCard
+                  key={b.id}
+                  booking={{
+                    id: b.id,
+                    title: b.title || '约拍邀请',
+                    description: b.description,
+                    type: b.type,
+                    style: b.style,
+                    location: b.location || undefined,
+                    budget: b.budget,
+                    views: b.views ?? 0,
+                    comments: b.comments ?? 0,
+                    created_at: b.created_at,
+                    user: {
+                      id: b.requester.id,
+                      username: b.requester.username,
+                      avatar_url: b.requester.avatar_url,
+                      rating: b.requester.rating,
+                    },
+                  }}
+                />
               ))}
             </div>
             {totalPages > 1 && (

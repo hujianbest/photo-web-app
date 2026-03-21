@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import { UserProfileHeader } from '@/components/UserProfileHeader';
 import { apiFetch } from '@/lib/api';
-import { SafeImage } from '@/components/SafeImage';
 
 interface UserStats {
   user_id: number;
@@ -74,41 +74,23 @@ export default function ProfilePage() {
       <Header />
 
       <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          <div className="p-6 flex flex-col sm:flex-row items-center sm:items-start gap-6">
-            <div className="flex-shrink-0">
-              {user.avatar_url ? (
-                <SafeImage
-                  src={user.avatar_url}
-                  alt="头像"
-                  className="w-24 h-24 rounded-full object-cover"
-                />
-              ) : (
-                <div className="w-24 h-24 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-3xl">
-                  {user.username?.[0]?.toUpperCase() ?? '?'}
-                </div>
-              )}
-            </div>
-            <div className="flex-1 text-center sm:text-left">
-              <h1 className="text-2xl font-bold text-gray-900">{user.username}</h1>
-              {user.bio && <p className="text-gray-600 mt-1">{user.bio}</p>}
-              {stats && (
-                <div className="flex flex-wrap gap-4 mt-4 text-sm text-gray-500">
-                  <span>积分 {stats.points}</span>
-                  <span>等级 Lv.{stats.level}</span>
-                  <span>作品 {stats.works_count}</span>
-                  <span>打卡 {stats.checkins_count}</span>
-                </div>
-              )}
-              <Link
-                href="/profile/edit"
-                className="inline-block mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm"
-              >
-                编辑资料
-              </Link>
-            </div>
-          </div>
+        <UserProfileHeader
+          user={{
+            username: user.username,
+            avatar_url: user.avatar_url ?? null,
+            bio: user.bio,
+            level: stats?.level?.toString(),
+            stats: {
+              works: stats?.works_count ?? 0,
+              checkins: stats?.checkins_count ?? 0,
+              bookings: 0,
+              likes: 0,
+            },
+          }}
+          isOwn={true}
+        />
 
+        <div className="bg-white rounded-lg shadow-md mt-6">
           <div className="border-t divide-y">
             <Link href="/works" className="flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition">
               <span className="text-gray-900">我的作品</span>
