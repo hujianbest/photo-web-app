@@ -51,6 +51,12 @@ export default function NotificationsPage() {
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (!localStorage.getItem('access_token')) {
+      const path = window.location.pathname + window.location.search;
+      window.location.href = `/auth/login?redirect=${encodeURIComponent(path)}`;
+      return;
+    }
     fetchNotifications();
   }, [filter]);
 

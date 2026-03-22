@@ -1,5 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
 
+// 专用端口，避免与本机已在跑的 next dev（3000/3001…）冲突
+const PLAYWRIGHT_WEB_PORT = process.env.PLAYWRIGHT_WEB_PORT ?? '3477';
+const defaultBaseURL = `http://127.0.0.1:${PLAYWRIGHT_WEB_PORT}`;
+
 export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: true,
@@ -8,7 +12,7 @@ export default defineConfig({
   workers: 4,
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
-    baseURL: process.env.BASE_URL || 'http://localhost:3000',
+    baseURL: process.env.BASE_URL || defaultBaseURL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'on-first-failure',
@@ -36,9 +40,9 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: true,
-    timeout: 30000,
+    command: `npx next dev --hostname 127.0.0.1 -p ${PLAYWRIGHT_WEB_PORT}`,
+    url: process.env.BASE_URL || defaultBaseURL,
+    reuseExistingServer: !process.env.CI,
+    timeout: 120000,
   },
 });

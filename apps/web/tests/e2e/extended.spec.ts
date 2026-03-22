@@ -3,14 +3,17 @@
  * 基于 docs/0320_test_plan.md 扩展测试用例
  */
 
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
+const PLAYWRIGHT_WEB_PORT = process.env.PLAYWRIGHT_WEB_PORT ?? '3477';
+const BASE_URL =
+  process.env.BASE_URL || `http://127.0.0.1:${PLAYWRIGHT_WEB_PORT}`;
+const BASE_HOST = new URL(BASE_URL).host;
 
-// 辅助函数：等待页面完全加载
-async function waitForPageReady(page: any) {
+// 辅助函数：等待页面基本就绪（避免 dev 环境下 networkidle 长期不触发）
+async function waitForPageReady(page: Page) {
   await page.waitForLoadState('domcontentloaded');
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('load');
 }
 
 test.describe('Feature: 用户注册流程', () => {
@@ -229,18 +232,20 @@ test.describe('Feature: 搜索功能', () => {
 
 test.describe('Feature: 响应式布局', () => {
   test('Given 移动端访问, When 页面加载, Then 应正确显示', async ({ page }) => {
+    test.setTimeout(60000);
     await page.setViewportSize({ width: 375, height: 667 });
     await page.goto(BASE_URL);
     await waitForPageReady(page);
-    
+
     expect(page.url()).toBeDefined();
   });
 
   test('Given 平板端访问, When 页面加载, Then 应正确显示', async ({ page }) => {
+    test.setTimeout(60000);
     await page.setViewportSize({ width: 768, height: 1024 });
     await page.goto(BASE_URL);
     await waitForPageReady(page);
-    
+
     expect(page.url()).toBeDefined();
   });
 });
@@ -273,7 +278,7 @@ test.describe('Feature: 页面导航', () => {
       await page.goto(BASE_URL);
     }
     
-    expect(page.url()).toContain('localhost:3000');
+    expect(page.url()).toContain(BASE_HOST);
   });
 });
 
@@ -348,11 +353,19 @@ test.describe('Feature: 用户体验', () => {
   });
 
   test('Given 用户点击返回按钮, When 返回, Then 应正确返回', async ({ page }) => {
-    await page.goto(BASE_URL);
-    await page.goto(`${BASE_URL}/works`);
-    await page.goBack();
-    
-    expect(page.url()).toContain('localhost:3000');
+    await page.goto(BASE_URL, { waitUntil: 'load' });
+    await page.goto(`${BASE_URL}/works`, { waitUntil: 'load' });
+    await page.goBack({ waitUntil: 'load' });
+
+    await page.waitForURL(
+      (url) => {
+        const p = url.pathname;
+        return p === '/' || p === '';
+      },
+      { timeout: 15000 }
+    );
+
+    expect(page.url()).toContain(BASE_HOST);
     expect(page.url()).not.toContain('/works');
   });
 });

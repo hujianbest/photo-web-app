@@ -10,10 +10,10 @@ from src.routes import image_routes, health_routes
 async def lifespan(app: FastAPI):
     """应用生命周期管理"""
     # 启动时初始化
-    print("🤖 AI服务启动中...")
+    print("AI service starting...")
     yield
     # 关闭时清理
-    print("🤖 AI服务关闭中...")
+    print("AI service shutting down...")
 
 
 # 创建FastAPI应用
