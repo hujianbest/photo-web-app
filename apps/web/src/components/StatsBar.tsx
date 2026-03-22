@@ -1,12 +1,12 @@
 'use client';
 
-import { Camera, Users, MapPin, Handshake } from 'lucide-react';
+import { Camera, Users, MapPin, CalendarCheck } from 'lucide-react';
 
 const STATS = [
   { icon: Camera, value: '12,580', label: '作品' },
   { icon: Users, value: '3,420', label: '摄影师' },
   { icon: MapPin, value: '8,960', label: '打卡点' },
-  { icon: Handshake, value: '156', label: '今日约拍' },
+  { icon: CalendarCheck, value: '156', label: '今日约拍' },
 ];
 
 export function StatsBar() {

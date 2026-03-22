@@ -13,6 +13,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh-CN">
+      <head>
+        <style dangerouslySetInnerHTML={{ __html: 'body{display:block!important}' }} />
+      </head>
       <body className="antialiased">
         <NotificationsSocketWrapper>{children}</NotificationsSocketWrapper>
       </body>
