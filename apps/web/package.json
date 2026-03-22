@@ -7,6 +7,8 @@
     "start": "next start",
     "lint": "next lint",
     "test": "playwright test",
+    "test:unit": "vitest",
+    "test:unit:coverage": "vitest --coverage",
     "test:e2e": "playwright test --project=chromium",
     "test:ui": "playwright test --ui",
     "test:debug": "playwright test --debug"
@@ -25,9 +27,14 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/node": "^20.3.1",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
-    "typescript": "^5.1.3"
+    "@vitejs/plugin-react": "^6.0.1",
+    "jsdom": "^29.0.1",
+    "typescript": "^5.1.3",
+    "vitest": "^4.1.0"
   }
 }

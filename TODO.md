@@ -3,16 +3,16 @@
 ## Phase 1: 后端单元测试
 - [x] Task 1: Users 模块单元测试
 - [x] Task 2: Spots 模块单元测试
-- [ ] Task 3: Bookings 模块单元测试
-- [ ] Task 4: Orders 模块单元测试
-- [ ] Task 5: Messages 模块单元测试
-- [ ] Task 6: Articles 模块单元测试
-- [ ] Task 7: Tags 模块单元测试
-- [ ] Task 8: Ranking 模块单元测试
+- [x] Task 3: Bookings 模块单元测试
+- [x] Task 4: Orders 模块单元测试
+- [x] Task 5: Messages 模块单元测试
+- [x] Task 6: Articles 模块单元测试
+- [x] Task 7: Tags 模块单元测试
+- [x] Task 8: Ranking 模块单元测试
 
 ## Phase 2: 后端 E2E 测试
-- [ ] Task 9: 配置 E2E 测试环境
-- [ ] Task 10: Auth E2E 测试
+- [x] Task 9: 配置 E2E 测试环境
+- [x] Task 10: Auth E2E 测试 (已有完善测试)
 
 ## Phase 3: 前端组件测试
 - [ ] Task 11: 配置 Vitest 测试环境
