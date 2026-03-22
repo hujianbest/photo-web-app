@@ -2,56 +2,63 @@
  * UserProfileHeader 组件测试
  */
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
-import UserProfileHeader from '../UserProfileHeader';
+import { describe, it, expect, vi } from 'vitest';
+import { UserProfileHeader } from '../UserProfileHeader';
 
 // Mock Next.js Image
 vi.mock('next/image', () => ({
-  default: ({ src, alt, fill }: any) => <img src={src} alt={alt} />,
+  default: ({ src, alt, ...props }: any) => (
+    <img src={src} alt={alt} {...props} />
+  ),
 }));
 
 describe('UserProfileHeader Component', () => {
   const mockUser = {
-    id: 1,
     username: 'testuser',
-    nickname: '测试用户',
     avatar_url: 'https://example.com/avatar.jpg',
     bio: '这是一个测试用户',
     location: '北京',
-    points: 1000,
     level: 'intermediate',
-    followers_count: 100,
-    following_count: 50,
-    works_count: 20,
+    stats: {
+      works: 20,
+      checkins: 15,
+      bookings: 10,
+      likes: 100,
+    },
   };
 
-  it('should render user nickname', () => {
-    render(<UserProfileHeader user={mockUser as any} />);
-    expect(screen.getByText('测试用户')).toBeInTheDocument();
+  it('should render username', () => {
+    render(<UserProfileHeader user={mockUser} isOwn={false} />);
+    expect(screen.getByText('testuser')).toBeInTheDocument();
   });
 
   it('should display bio', () => {
-    render(<UserProfileHeader user={mockUser as any} />);
+    render(<UserProfileHeader user={mockUser} isOwn={false} />);
     expect(screen.getByText('这是一个测试用户')).toBeInTheDocument();
   });
 
-  it('should display follower count', () => {
-    render(<UserProfileHeader user={mockUser as any} />);
-    expect(screen.getByText(/100/)).toBeInTheDocument();
-  });
-
-  it('should display following count', () => {
-    render(<UserProfileHeader user={mockUser as any} />);
-    expect(screen.getByText(/50/)).toBeInTheDocument();
+  it('should display location', () => {
+    render(<UserProfileHeader user={mockUser} isOwn={false} />);
+    expect(screen.getByText(/北京/)).toBeInTheDocument();
   });
 
   it('should display works count', () => {
-    render(<UserProfileHeader user={mockUser as any} />);
-    expect(screen.getByText(/20/)).toBeInTheDocument();
+    render(<UserProfileHeader user={mockUser} isOwn={false} />);
+    expect(screen.getByText('20')).toBeInTheDocument();
   });
 
-  it('should display user level', () => {
-    render(<UserProfileHeader user={mockUser as any} />);
-    expect(screen.getByText(/intermediate|中级/i)).toBeInTheDocument();
+  it('should display level', () => {
+    render(<UserProfileHeader user={mockUser} isOwn={false} />);
+    expect(screen.getByText(/intermediate/i)).toBeInTheDocument();
+  });
+
+  it('should show edit button when isOwn is true', () => {
+    render(<UserProfileHeader user={mockUser} isOwn={true} />);
+    expect(screen.getByText('编辑资料')).toBeInTheDocument();
+  });
+
+  it('should not show edit button when isOwn is false', () => {
+    render(<UserProfileHeader user={mockUser} isOwn={false} />);
+    expect(screen.queryByText('编辑资料')).not.toBeInTheDocument();
   });
 });
