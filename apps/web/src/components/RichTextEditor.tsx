@@ -3,6 +3,7 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
+import LinkExtension from '@tiptap/extension-link';
 import {
   Bold,
   Italic,
@@ -41,6 +42,11 @@ export function RichTextEditor({
       }),
       Placeholder.configure({
         placeholder,
+      }),
+      LinkExtension.configure({
+        openOnClick: false,
+        autolink: true,
+        linkOnPaste: true,
       }),
     ],
     content,

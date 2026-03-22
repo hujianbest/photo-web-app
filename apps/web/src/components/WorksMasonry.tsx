@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Heart, MessageCircle } from 'lucide-react';
 import { API_BASE } from '@/lib/api';
+import { shouldUnoptimizeImageSrc } from '@/lib/image-utils';
 
 const CATEGORIES = [
   { key: 'all', label: '全部' },
@@ -74,6 +75,7 @@ export function WorksMasonry() {
                 alt={work.title}
                 width={400}
                 height={300}
+                unoptimized={shouldUnoptimizeImageSrc(work.images?.[0] || '')}
                 className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-300"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">

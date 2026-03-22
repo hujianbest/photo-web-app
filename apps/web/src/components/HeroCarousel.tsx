@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { shouldUnoptimizeImageSrc } from '@/lib/image-utils';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -38,7 +39,14 @@ export function HeroCarousel() {
         <div className="flex h-full">
           {FEATURED.map((work) => (
             <div key={work.id} className="flex-[0_0_100%] relative">
-              <Image src={work.image} alt={work.title} fill className="object-cover" priority />
+              <Image
+                src={work.image}
+                alt={work.title}
+                fill
+                unoptimized={shouldUnoptimizeImageSrc(work.image)}
+                className="object-cover"
+                priority
+              />
               <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/70" />
             </div>
           ))}

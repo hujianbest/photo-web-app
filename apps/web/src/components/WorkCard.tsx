@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { shouldUnoptimizeImageSrc } from '@/lib/image-utils';
 
 interface WorkCardProps {
   work: {
@@ -40,6 +41,7 @@ export function WorkCard({ work }: WorkCardProps) {
               src={coverImage}
               alt={work.title}
               fill
+              unoptimized={shouldUnoptimizeImageSrc(coverImage)}
               className="object-cover"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               onError={() => setCoverError(true)}
@@ -64,6 +66,7 @@ export function WorkCard({ work }: WorkCardProps) {
                   alt={user.username ?? ''}
                   width={24}
                   height={24}
+                  unoptimized={shouldUnoptimizeImageSrc(user.avatar_url)}
                   className="rounded-full object-cover"
                   onError={() => setAvatarError(true)}
                 />

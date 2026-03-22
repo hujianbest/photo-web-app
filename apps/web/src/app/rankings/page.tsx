@@ -7,6 +7,7 @@ import { Trophy, Crown } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { API_BASE } from '@/lib/api';
+import { shouldUnoptimizeImageSrc } from '@/lib/image-utils';
 
 type Period = 'day' | 'week' | 'month';
 type RankingType = 'works' | 'photographers' | 'newcomers';
@@ -91,7 +92,18 @@ export default function RankingsPage() {
                 ) : (
                   <Link href={`/profile/${item.id}`} className="flex-1 flex items-center gap-4">
                     <div className="w-10 h-10 rounded-full bg-neutral-200 overflow-hidden flex items-center justify-center">
-                      {item.avatar_url ? <Image src={item.avatar_url} alt="" width={40} height={40} className="object-cover" /> : item.username?.[0]}
+                      {item.avatar_url ? (
+                        <Image
+                          src={item.avatar_url}
+                          alt=""
+                          width={40}
+                          height={40}
+                          unoptimized={shouldUnoptimizeImageSrc(item.avatar_url)}
+                          className="object-cover"
+                        />
+                      ) : (
+                        item.username?.[0]
+                      )}
                     </div>
                     <div className="flex-1">
                       <p className="font-medium text-neutral-900">{item.username}</p>

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { shouldUnoptimizeImageSrc } from '@/lib/image-utils';
 import { MapPin } from 'lucide-react';
 
 interface UserProfileHeaderProps {
@@ -33,7 +34,14 @@ export function UserProfileHeader({ user, isOwn }: UserProfileHeaderProps) {
         <div className="absolute -bottom-16 left-8">
           <div className="w-32 h-32 rounded-full border-4 border-white bg-neutral-200 overflow-hidden flex items-center justify-center text-4xl text-neutral-400">
             {user.avatar_url ? (
-              <Image src={user.avatar_url} alt="" width={128} height={128} className="object-cover" />
+              <Image
+                src={user.avatar_url}
+                alt=""
+                width={128}
+                height={128}
+                unoptimized={shouldUnoptimizeImageSrc(user.avatar_url)}
+                className="object-cover"
+              />
             ) : (
               user.username[0]
             )}

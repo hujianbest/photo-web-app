@@ -20,10 +20,39 @@ async function bootstrap() {
   app.use(express.json({ limit: '50mb' }));
   app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-  // 启用CORS（开发时允许 3000/3001，避免前端换端口后请求被拒）
-  const corsOrigins = process.env.CORS_ORIGINS?.split(',').map((o) => o.trim()).filter(Boolean);
+  // CORS：开发环境将 CORS_ORIGINS 与常见本地端口合并，避免 Next 占用 3002/3030 等时请求被拒
+  const corsOrigins =
+    process.env.CORS_ORIGINS?.split(',')
+      .map((o) => o.trim())
+      .filter(Boolean) ?? [];
+  const defaultDevOrigins = [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:3002',
+    'http://localhost:3003',
+    'http://localhost:3030',
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:3001',
+    'http://127.0.0.1:3002',
+    'http://127.0.0.1:3003',
+    'http://127.0.0.1:3030',
+  ];
+  const prodDefaultOrigins = [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:3001',
+  ];
+  const isDev = process.env.NODE_ENV !== 'production';
+  const allowedOrigins = isDev
+    ? corsOrigins.length
+      ? [...new Set([...corsOrigins, ...defaultDevOrigins])]
+      : defaultDevOrigins
+    : corsOrigins.length
+      ? corsOrigins
+      : prodDefaultOrigins;
   app.enableCors({
-    origin: corsOrigins.length ? corsOrigins : ['http://localhost:3000', 'http://localhost:3001', 'http://127.0.0.1:3000', 'http://127.0.0.1:3001'],
+    origin: allowedOrigins,
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization'],
   });

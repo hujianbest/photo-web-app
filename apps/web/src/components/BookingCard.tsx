@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { shouldUnoptimizeImageSrc } from '@/lib/image-utils';
 import { MapPin, Palette, Eye, MessageCircle, Clock } from 'lucide-react';
 
 interface BookingCardProps {
@@ -33,7 +34,14 @@ export function BookingCard({ booking }: BookingCardProps) {
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-full bg-neutral-200 overflow-hidden flex items-center justify-center text-neutral-400 text-lg">
             {booking.user.avatar_url ? (
-              <Image src={booking.user.avatar_url} alt="" width={48} height={48} className="object-cover" />
+              <Image
+                src={booking.user.avatar_url}
+                alt=""
+                width={48}
+                height={48}
+                unoptimized={shouldUnoptimizeImageSrc(booking.user.avatar_url)}
+                className="object-cover"
+              />
             ) : (
               booking.user.username[0]
             )}

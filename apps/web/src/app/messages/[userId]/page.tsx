@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Header } from '@/components/Header';
-import { apiFetch } from '@/lib/api';
+import { apiFetch, BACKEND_ORIGIN } from '@/lib/api';
 import { ArrowLeft, Send, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { io, Socket } from 'socket.io-client';
@@ -64,7 +64,7 @@ export default function ChatPage({ params }: { params: { userId: string } }) {
     // Setup WebSocket connection
     const token = localStorage.getItem('access_token');
     if (token) {
-      const newSocket = io('http://localhost:8000', {
+      const newSocket = io(BACKEND_ORIGIN, {
         path: '/socket.io/',
         transports: ['websocket', 'polling'],
         auth: { token },

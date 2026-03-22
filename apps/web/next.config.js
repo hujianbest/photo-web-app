@@ -2,6 +2,10 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  // Next 与部分 ESLint 版本组合会在构建阶段报 useEslintrc/extensions 已移除；单独执行 next lint 即可
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   images: {
     remotePatterns: [
       {
@@ -12,6 +16,11 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'cdn.example.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'example.com',
         pathname: '/**',
       },
       {

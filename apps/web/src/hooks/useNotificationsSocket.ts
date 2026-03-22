@@ -2,11 +2,7 @@
 
 import { useEffect, useRef, useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
-
-const API_BASE =
-  typeof window !== 'undefined'
-    ? (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000')
-    : '';
+import { BACKEND_ORIGIN } from '@/lib/api';
 
 const WS_PATH = '/ws';
 const WS_NAMESPACE = '/notifications';
@@ -33,7 +29,7 @@ export function useNotificationsSocket(
   useEffect(() => {
     if (!token || typeof window === 'undefined') return;
 
-    const base = API_BASE.replace(/\/$/, '');
+    const base = BACKEND_ORIGIN;
     const socket = io(`${base}${WS_NAMESPACE}`, {
       path: WS_PATH,
       auth: { token },

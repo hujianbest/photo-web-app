@@ -84,7 +84,7 @@ export default function NotificationsPage() {
 
   const markAsRead = async (id: number) => {
     try {
-      await apiFetch(`/notifications/${id}/read`, { method: 'PUT' });
+      await apiFetch(`/notifications/${id}/read`, { method: 'POST' });
       setNotifications((prev) =>
         prev.map((n) => (n.id === id ? { ...n, is_read: true } : n))
       );
@@ -95,7 +95,7 @@ export default function NotificationsPage() {
 
   const markAllAsRead = async () => {
     try {
-      await apiFetch('/notifications/read-all', { method: 'PUT' });
+      await apiFetch('/notifications/read-all', { method: 'POST' });
       setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
     } catch (error) {
       console.error('全部标记已读失败:', error);

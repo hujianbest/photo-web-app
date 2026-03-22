@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { shouldUnoptimizeImageSrc } from '@/lib/image-utils';
 import { MapPin, ArrowRight } from 'lucide-react';
 
 const SPOTS = [
@@ -21,9 +22,15 @@ export function FeaturedSpots() {
         </div>
         <div className="grid md:grid-cols-2 gap-6">
           {SPOTS.map((spot) => (
-            <Link key={spot.id} href={`/spots/${spot.id}`} className="group flex gap-4 p-4 bg-white rounded-xl border border-neutral-200 hover:shadow-lg transition-shadow">
+            <Link key={spot.id} href="/spots" className="group flex gap-4 p-4 bg-white rounded-xl border border-neutral-200 hover:shadow-lg transition-shadow">
               <div className="relative w-32 h-24 rounded-lg overflow-hidden bg-neutral-100 flex-shrink-0">
-                <Image src={spot.image} alt={spot.name} fill className="object-cover" />
+                <Image
+                  src={spot.image}
+                  alt={spot.name}
+                  fill
+                  unoptimized={shouldUnoptimizeImageSrc(spot.image)}
+                  className="object-cover"
+                />
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold text-neutral-900">{spot.name}</h3>

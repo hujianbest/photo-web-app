@@ -2,10 +2,14 @@
  * 统一 API 请求封装：自动附带 Token，401 时先尝试刷新 Token 再重试，失败则跳转登录页并带回跳地址
  */
 
+/** 后端源地址（Socket.IO 等无法走 Next 代理时使用），与 next.config rewrites 的目标一致 */
+export const BACKEND_ORIGIN = (
+  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+).replace(/\/$/, '');
+
+/** 浏览器端 HTTP 使用空基址，走 Next rewrites（/api → 后端），避免跨域；服务端直连 BACKEND_ORIGIN */
 export const API_BASE =
-  typeof window !== 'undefined'
-    ? (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000')
-    : '';
+  typeof window !== 'undefined' ? '' : BACKEND_ORIGIN;
 
 const AUTH_KEYS = ['access_token', 'refresh_token', 'user_data'] as const;
 

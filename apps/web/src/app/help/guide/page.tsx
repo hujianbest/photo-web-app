@@ -10,7 +10,7 @@ import {
   User,
   Camera,
   MapPin,
-  Handshake,
+  HeartHandshake,
   CreditCard,
   Image,
   Star
@@ -122,7 +122,7 @@ const GUIDE_DATA: GuideSection[] = [
   },
   {
     id: 'client',
-    icon: Handshake,
+    icon: HeartHandshake,
     title: '客户指南',
     description: '如何找到合适的摄影师',
     steps: [

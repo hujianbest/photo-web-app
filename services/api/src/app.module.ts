@@ -14,6 +14,7 @@ import { ArticlesModule } from './modules/articles/articles.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { MessagesModule } from './modules/messages/messages.module';
 import { TagsModule } from './modules/tags/tags.module';
+import { RankingModule } from './modules/ranking/ranking.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { TagsModule } from './modules/tags/tags.module';
     NotificationsModule,
     MessagesModule,
     TagsModule,
+    RankingModule,
   ],
   controllers: [AppController],
   providers: [],
